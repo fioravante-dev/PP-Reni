@@ -1,0 +1,116 @@
+<div class="card">
+  <h3>🔄 Processo ETL (Extract, Transform, Load)</h3>
+  <p>
+    Pipeline completo de extração, transformação e carregamento dos dados do
+    <a
+      href="https://www.kaggle.com/datasets/uciml/german-credit"
+      target="_blank"
+      >German Credit Dataset (Kaggle)</a
+    >.
+  </p>
+  <p><strong>Arquivos utilizados:</strong></p>
+  <ul>
+    <li><code>src/data/german_credit_data.csv</code> - Dataset original</li>
+    <li>
+      <code>src/python/process_german_data.py</code> - Script de processamento
+    </li>
+    <li>
+      <code>src/data/german_credit_processed.json</code> - Dados processados
+    </li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>📥 1. EXTRACT (Extração)</h3>
+  <p>Leitura do dataset German Credit do Kaggle:</p>
+  <div class="code-block">
+    import pandas as pd # Carregar dados do German Credit Dataset df =
+    pd.read_csv('src/data/german_credit_data.csv') print(f"Total de registros:
+    {len(df)}") print(f"Colunas: {list(df.columns)}")
+  </div>
+  <p><strong>Estrutura dos dados originais:</strong></p>
+  <ul>
+    <li>1.000 registros de clientes alemães</li>
+    <li>
+      10 colunas (idade, sexo, trabalho, moradia, poupança, conta corrente,
+      valor, duração, propósito, risco)
+    </li>
+    <li>Mix de variáveis numéricas e categóricas</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>⚙️ 2. TRANSFORM (Transformação)</h3>
+  <p>Processamento e limpeza dos dados:</p>
+  <div class="code-block">
+    # Limpeza de dados df = df.dropna() # Remove valores ausentes df =
+    df.drop_duplicates() # Remove duplicatas # Conversão de tipos df['Age'] =
+    df['Age'].astype(int) df['Credit amount'] = df['Credit
+    amount'].astype(float) # Categorização do risco df['Risk'] =
+    df['Risk'].map({0: 'good', 1: 'bad'}) # Normalização de strings df =
+    df.apply(lambda x: x.str.lower() if x.dtype == "object" else x)
+  </div>
+</div>
+
+<div class="card">
+  <h3>💾 3. LOAD (Carregamento)</h3>
+  <p>Salvamento em formato JSON para uso na aplicação:</p>
+  <div class="code-block">
+    # Converter para JSON data_json = df.to_dict('records') # Salvar arquivo
+    processado with open('src/data/german_credit_processed.json', 'w') as f:
+    json.dump(data_json, f, indent=2) print(f"✅ Dados processados salvos:
+    {len(data_json)} registros")
+  </div>
+</div>
+
+<div class="card">
+  <h3>🔄 Pipeline ETL</h3>
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <div class="step-icon">📥</div>
+      <div class="step-title">EXTRACT</div>
+      <div class="step-desc">german_credit_data.csv</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">
+      <div class="step-icon">⚙️</div>
+      <div class="step-title">TRANSFORM</div>
+      <div class="step-desc">Limpeza e processamento</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step">
+      <div class="step-icon">💾</div>
+      <div class="step-title">LOAD</div>
+      <div class="step-desc">german_credit_processed.json</div>
+    </div>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <h4>Total de Registros</h4>
+    <div class="stat-value">1.000</div>
+  </div>
+  <div class="stat-card">
+    <h4>Variáveis</h4>
+    <div class="stat-value">10</div>
+  </div>
+  <div class="stat-card">
+    <h4>Registros Válidos</h4>
+    <div class="stat-value">1.000</div>
+  </div>
+  <div class="stat-card">
+    <h4>Taxa de Qualidade</h4>
+    <div class="stat-value">100%</div>
+  </div>
+</div>
+
+<div id="etl-result"></div>
+
+<div class="card" style="background: #d4edda; border-left: 4px solid #28a745">
+  <p style="margin: 0; color: #155724">
+    <strong>✅ Dados carregados automaticamente</strong><br />
+    Os dados do German Credit Dataset já foram processados e estão disponíveis
+    para análise.
+  </p>
+</div>

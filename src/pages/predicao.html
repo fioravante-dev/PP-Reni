@@ -1,0 +1,115 @@
+<div class="card">
+  <h3>🎯 Sistema de Predição de Risco</h3>
+  <p>
+    Utilize o formulário abaixo para avaliar o risco de crédito de um novo
+    cliente em tempo real.
+  </p>
+</div>
+
+<div class="card">
+  <form id="predictionForm">
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      "
+    >
+      <div class="form-group">
+        <label for="idade">Idade (anos)</label>
+        <input type="number" id="idade" min="19" max="75" value="35" required />
+      </div>
+
+      <div class="form-group">
+        <label for="sexo">Sexo</label>
+        <select id="sexo" required>
+          <option value="male" selected>Masculino</option>
+          <option value="female">Feminino</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="trabalho">Categoria Profissional</label>
+        <select id="trabalho" required>
+          <option value="0">Desempregado</option>
+          <option value="1">Não qualificado</option>
+          <option value="2" selected>Qualificado</option>
+          <option value="3">Altamente qualificado</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="moradia">Tipo de Moradia</label>
+        <select id="moradia" required>
+          <option value="own" selected>Própria</option>
+          <option value="rent">Alugada</option>
+          <option value="free">Gratuita</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="poupanca">Nível de Poupança</label>
+        <select id="poupanca" required>
+          <option value="N/A">Não informado</option>
+          <option value="little" selected>Pouco</option>
+          <option value="moderate">Moderado</option>
+          <option value="quite rich">Bom</option>
+          <option value="rich">Rico</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="conta_corrente">Status Conta Corrente</label>
+        <select id="conta_corrente" required>
+          <option value="N/A">Não informado</option>
+          <option value="little" selected>Pouco</option>
+          <option value="moderate">Moderado</option>
+          <option value="rich">Rico</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="valor_credito">Valor do Crédito (€)</label>
+        <input
+          type="number"
+          id="valor_credito"
+          min="250"
+          max="20000"
+          value="3000"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="duracao_meses">Duração (meses)</label>
+        <input
+          type="number"
+          id="duracao_meses"
+          min="4"
+          max="72"
+          value="24"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="proposito">Propósito do Crédito</label>
+        <select id="proposito" required>
+          <option value="car" selected>Carro</option>
+          <option value="furniture/equipment">Móveis/Equipamentos</option>
+          <option value="radio/TV">Rádio/TV</option>
+          <option value="education">Educação</option>
+          <option value="business">Negócios</option>
+          <option value="repairs">Reparos</option>
+          <option value="vacation/others">Férias/Outros</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn" style="margin-top: 20px">
+      🔍 Analisar Risco de Crédito
+    </button>
+  </form>
+</div>
+
+<div id="predictionResult"></div>

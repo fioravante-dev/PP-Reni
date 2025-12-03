@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detecção de Risco de Crédito - Projeto Prático</title>
+
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="src/css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🏦 Sistema de Detecção de Risco de Crédito</h1>
+        <p>Projeto Prático - Análise de Dados e Machine Learning</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="showSection(0)">
+          📋 Descrição
+        </button>
+        <button class="tab" onclick="showSection(1)">🔄 ETL</button>
+        <button class="tab" onclick="showSection(2)">
+          📊 Análise Exploratória
+        </button>
+        <button class="tab" onclick="showSection(3)">🤖 Modelagem</button>
+        <button class="tab" onclick="showSection(4)">📈 Avaliação</button>
+        <button class="tab" onclick="showSection(5)">🎯 Predição</button>
+        <button class="tab" onclick="showSection(6)">✅ Conclusão</button>
+      </div>
+
+      <div class="content">
+        <!-- As seções serão carregadas dos arquivos HTML individuais -->
+        <div id="page-container">
+          <!-- Conteúdo dinâmico -->
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="src/js/ml.js"></script>
+    <script src="src/js/app.js"></script>
+    <script src="src/js/charts.js"></script>
+    <script src="src/js/prediction.js"></script>
+    <script src="src/js/pageLoader.js"></script>
+  </body>
+</html>

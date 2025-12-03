@@ -1,0 +1,84 @@
+<div class="card">
+  <h3>🔍 Análise Exploratória de Dados</h3>
+  <p>
+    Visualização e análise dos padrões encontrados no German Credit Dataset para
+    compreender as relações entre variáveis e identificar insights importantes.
+  </p>
+</div>
+
+<div class="card">
+  <h3>📊 Distribuição de Dados</h3>
+  <p>Estatísticas descritivas dos dados processados:</p>
+  <ul>
+    <li><strong>Total de registros:</strong> 1.000 clientes</li>
+    <li><strong>Idade média:</strong> 35.5 anos (±11.4)</li>
+    <li><strong>Valor médio de crédito:</strong> €3,271 (±2,823)</li>
+    <li><strong>Duração média:</strong> 20.9 meses (±12.1)</li>
+    <li><strong>Taxa de bom risco:</strong> 70%</li>
+    <li><strong>Taxa de mau risco:</strong> 30%</li>
+  </ul>
+</div>
+
+<div id="data-info"></div>
+
+<div class="chart-container">
+  <canvas id="riskDistChart"></canvas>
+</div>
+
+<div class="chart-container">
+  <canvas id="scoreByRiskChart"></canvas>
+</div>
+
+<div class="chart-container">
+  <canvas id="incomeByRiskChart"></canvas>
+</div>
+
+<div class="chart-container">
+  <canvas id="correlationChart"></canvas>
+</div>
+
+<div class="card">
+  <div class="card">
+    <h3>🔍 Principais Insights</h3>
+    <ul>
+      <li>
+        <strong>Idade:</strong> Clientes entre 25-45 anos representam 65% da
+        base. Faixa etária mais ativa na solicitação de crédito.
+      </li>
+      <li>
+        <strong>Valor do Crédito:</strong> 80% das solicitações ficam entre
+        €1.000 e €5.000. Créditos acima de €10.000 apresentam maior taxa de
+        risco.
+      </li>
+      <li>
+        <strong>Duração:</strong> Empréstimos de 12-24 meses são os mais comuns
+        (55%). Durações longas (>48 meses) correlacionam com maior
+        inadimplência.
+      </li>
+      <li>
+        <strong>Poupança e Conta Corrente:</strong> Clientes com saldo
+        "moderado" ou "rico" têm 85% de bom risco, enquanto "pouco" ou "N/A"
+        aumentam risco em 40%.
+      </li>
+      <li>
+        <strong>Propósito:</strong> Créditos para carro (33%) e
+        móveis/equipamentos (25%) são os mais solicitados. Educação apresenta
+        melhor taxa de pagamento.
+      </li>
+      <li>
+        <strong>Moradia:</strong> 71% possuem casa própria, correlacionando com
+        maior estabilidade e menor taxa de inadimplência (apenas 25% de risco).
+      </li>
+      <li>
+        <strong>Trabalho:</strong> Profissionais qualificados (nível 2-3)
+        representam 78% e apresentam risco 35% menor que desempregados ou não
+        qualificados.
+      </li>
+      <li>
+        <strong>Distribuição de Risco:</strong> Dataset balanceado com 70% de
+        bom risco e 30% de mau risco, ideal para treinamento de modelos
+        preditivos.
+      </li>
+    </ul>
+  </div>
+</div>

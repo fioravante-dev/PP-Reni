@@ -1,0 +1,67 @@
+<div class="card">
+  <h3>🤖 Modelagem e Machine Learning</h3>
+  <p>
+    <strong>Algoritmo Escolhido: Rede Neural com TensorFlow.js</strong>
+  </p>
+  <p>A Rede Neural foi selecionada pelos seguintes motivos:</p>
+  <ul>
+    <li>Executa 100% no navegador sem necessidade de servidor</li>
+    <li>Aprende padrões complexos nos dados automaticamente</li>
+    <li>Suporta GPU via WebGL para treinamento rápido</li>
+    <li>Dropout para prevenir overfitting</li>
+    <li>Otimizador Adam para convergência eficiente</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>⚙️ Arquitetura do Modelo</h3>
+  <div class="code-block">
+    // Rede Neural Feedforward const model = tf.sequential({ layers: [ // Camada
+    de entrada (9 features) + 32 neurônios tf.layers.dense({ units: 32,
+    activation: 'relu', inputShape: [9] }), tf.layers.dropout({ rate: 0.3 }), //
+    Camada oculta com 16 neurônios tf.layers.dense({ units: 16, activation:
+    'relu' }), tf.layers.dropout({ rate: 0.2 }), // Camada de saída
+    (classificação binária) tf.layers.dense({ units: 1, activation: 'sigmoid' })
+    ] }); // Compilar com otimizador Adam model.compile({ optimizer: 'adam',
+    loss: 'binaryCrossentropy', metrics: ['accuracy', 'precision', 'recall'] });
+  </div>
+</div>
+
+<div class="card">
+  <h3>📚 Divisão dos Dados</h3>
+  <ul>
+    <li><strong>Treinamento:</strong> 80% dos dados (800 registros)</li>
+    <li><strong>Teste:</strong> 20% dos dados (200 registros)</li>
+    <li><strong>Epochs:</strong> 50 iterações</li>
+    <li><strong>Batch Size:</strong> 32 amostras por atualização</li>
+  </ul>
+</div>
+
+<div class="chart-container">
+  <canvas id="featureImportanceChart"></canvas>
+</div>
+
+<div class="card">
+  <h3>🎯 Features de Entrada</h3>
+  <p>O modelo utiliza 9 variáveis do German Credit Dataset:</p>
+  <ol>
+    <li><strong>Idade:</strong> Faixa etária do cliente (normalizado)</li>
+    <li><strong>Sexo:</strong> Masculino/Feminino (codificado 0/1)</li>
+    <li><strong>Trabalho:</strong> Nível de qualificação profissional (0-3)</li>
+    <li><strong>Moradia:</strong> Tipo de habitação (codificado 0-2)</li>
+    <li><strong>Poupança:</strong> Nível de reservas financeiras (0-4)</li>
+    <li><strong>Conta Corrente:</strong> Status da conta (0-3)</li>
+    <li>
+      <strong>Valor do Crédito:</strong> Montante solicitado (normalizado)
+    </li>
+    <li><strong>Duração:</strong> Prazo em meses (normalizado)</li>
+    <li><strong>Propósito:</strong> Finalidade do crédito (codificado 0-6)</li>
+  </ol>
+  <p style="margin-top: 15px">
+    <strong>Normalização:</strong> Z-score (mean=0, std=1) para melhor
+    convergência do modelo.
+  </p>
+</div>
+
+<button class="btn" onclick="trainModel()">🚀 Treinar Modelo</button>
+<div id="training-result"></div>

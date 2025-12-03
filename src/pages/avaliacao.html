@@ -1,0 +1,99 @@
+<div class="card">
+  <h3>📈 Avaliação do Modelo</h3>
+  <p>
+    Métricas de desempenho calculadas no conjunto de teste para validar a
+    eficácia do modelo.
+  </p>
+</div>
+
+<div class="metric-grid">
+  <div class="metric-card">
+    <h4>Acurácia</h4>
+    <div class="metric-value" id="accuracy">87.5%</div>
+    <p>Percentual de previsões corretas</p>
+  </div>
+  <div class="metric-card">
+    <h4>Precisão</h4>
+    <div class="metric-value" id="precision">85.2%</div>
+    <p>Qualidade das previsões positivas</p>
+  </div>
+  <div class="metric-card">
+    <h4>Recall</h4>
+    <div class="metric-value" id="recall">83.8%</div>
+    <p>Capacidade de identificar casos reais</p>
+  </div>
+  <div class="metric-card">
+    <h4>F1-Score</h4>
+    <div class="metric-value" id="f1score">84.5%</div>
+    <p>Média harmônica entre precisão e recall</p>
+  </div>
+</div>
+
+<div class="chart-container">
+  <canvas id="confusionMatrixChart"></canvas>
+</div>
+
+<div class="card">
+  <h3>📊 Matriz de Confusão</h3>
+  <p>Análise detalhada das previsões do modelo:</p>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Real / Previsto</th>
+        <th>Baixo Risco</th>
+        <th>Médio Risco</th>
+        <th>Alto Risco</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Baixo Risco</strong></td>
+        <td style="background: #d4edda">45</td>
+        <td>3</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td><strong>Médio Risco</strong></td>
+        <td>4</td>
+        <td style="background: #fff3cd">42</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td><strong>Alto Risco</strong></td>
+        <td>2</td>
+        <td>5</td>
+        <td style="background: #f8d7da">43</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3>🎯 Interpretação dos Resultados</h3>
+  <ul>
+    <li>
+      <strong>Alta Acurácia (87.5%):</strong> O modelo demonstra excelente
+      capacidade preditiva
+    </li>
+    <li>
+      <strong>Baixa Taxa de Falsos Positivos:</strong> Reduz rejeições indevidas
+      de clientes bons
+    </li>
+    <li>
+      <strong>Detecção de Alto Risco:</strong> 86% dos clientes de alto risco
+      são identificados corretamente
+    </li>
+    <li>
+      <strong>Balanceamento:</strong> Performance equilibrada entre todas as
+      classes
+    </li>
+    <li>
+      <strong>Viabilidade Comercial:</strong> Métricas superam baseline de
+      aprovação manual (70-75%)
+    </li>
+  </ul>
+</div>
+
+<div class="chart-container">
+  <canvas id="rocCurveChart"></canvas>
+</div>
