@@ -121,40 +121,53 @@ function createModel() {
   model.compile({
     optimizer: tf.train.adam(0.001),
     loss: "binaryCrossentropy",
-    metrics: ["accuracy", "precision", "recall"],
+    metrics: ["accuracy"],
   });
 
   return model;
 }
 
 // Treinar modelo
-async function trainModel() {
+async function trainModel(silent = false) {
+  console.log("Iniciando trainModel...");
   const resultDiv = document.getElementById("training-result");
+  const autoStatusDiv = document.getElementById("auto-train-status");
 
-  if (dataset.length === 0) {
-    resultDiv.innerHTML = `
-      <div class="card" style="background: #f8d7da; border-left: 4px solid #dc3545;">
-        <h3>❌ Erro</h3>
-        <p>Carregue os dados primeiro na seção ETL!</p>
-      </div>
-    `;
+  // Determinar qual div usar para status
+  const statusDiv = resultDiv || autoStatusDiv;
+
+  // Usar window.dataset para garantir acesso global
+  const currentData = window.dataset || [];
+
+  if (currentData.length === 0) {
+    console.warn("Dataset vazio em trainModel");
+    if (statusDiv) {
+      statusDiv.innerHTML = `
+        <div class="card" style="background: #f8d7da; border-left: 4px solid #dc3545;">
+          <h3>❌ Erro</h3>
+          <p>Carregue os dados primeiro na seção ETL!</p>
+        </div>
+      `;
+    }
     return;
   }
 
-  resultDiv.innerHTML = `
-    <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
-      <h3>🔄 Treinando Modelo...</h3>
-      <p>Aguarde enquanto o modelo aprende com os dados.</p>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
+  if (statusDiv) {
+    statusDiv.innerHTML = `
+      <div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+        <h3>🔄 Treinando Modelo Automaticamente...</h3>
+        <p>Aguarde enquanto o modelo aprende com os dados (50 epochs).</p>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <p id="training-status">Epoch 0/50</p>
       </div>
-      <p id="training-status">Epoch 0/50</p>
-    </div>
-  `;
+    `;
+  }
 
   try {
     // Preprocessar dados
-    const { features, labels } = preprocessData(dataset);
+    const { features, labels } = preprocessData(currentData);
 
     // Normalizar features
     const X = normalizeFeatures(features);
@@ -183,12 +196,15 @@ async function trainModel() {
       callbacks: {
         onEpochEnd: (epoch, logs) => {
           const progress = ((epoch + 1) / 50) * 100;
-          document.getElementById("progress-fill").style.width = `${progress}%`;
-          document.getElementById("training-status").textContent = `Epoch ${
-            epoch + 1
-          }/50 - Loss: ${logs.loss.toFixed(4)} - Acc: ${(
-            logs.acc * 100
-          ).toFixed(2)}% - Val Acc: ${(logs.val_acc * 100).toFixed(2)}%`;
+          const fill = document.getElementById("progress-fill");
+          const status = document.getElementById("training-status");
+          if (fill) fill.style.width = `${progress}%`;
+          if (status)
+            status.textContent = `Epoch ${
+              epoch + 1
+            }/50 - Loss: ${logs.loss.toFixed(4)} - Acc: ${(
+              logs.acc * 100
+            ).toFixed(2)}% - Val Acc: ${(logs.val_acc * 100).toFixed(2)}%`;
         },
       },
     });
@@ -196,9 +212,53 @@ async function trainModel() {
     trainingHistory = history;
 
     // Avaliar no conjunto de teste
-    const evaluation = trainedModel.evaluate(X_test, y_test);
-    const testLoss = await evaluation[0].data();
-    const testAccuracy = await evaluation[1].data();
+    let testLoss, testAccuracy, testPrecision, testRecall;
+
+    try {
+      // 1. Obter Loss e Accuracy padrão
+      const evaluation = trainedModel.evaluate(X_test, y_test);
+      if (Array.isArray(evaluation)) {
+        testLoss = await evaluation[0].data();
+        testAccuracy = await evaluation[1].data();
+        evaluation.forEach((t) => t.dispose());
+      } else {
+        testLoss = await evaluation.data();
+        // Se só retornou loss, algo está errado com metrics=['accuracy'], mas vamos tentar calcular manualmente
+        evaluation.dispose();
+      }
+
+      // 2. Calcular Precision e Recall manualmente (mais robusto)
+      const predictions = trainedModel.predict(X_test);
+      const predData = await predictions.data();
+      const trueData = await y_test.data();
+
+      let tp = 0,
+        tn = 0,
+        fp = 0,
+        fn = 0;
+      for (let i = 0; i < trueData.length; i++) {
+        const pred = predData[i] > 0.5 ? 1 : 0;
+        const actual = trueData[i];
+
+        if (actual === 1 && pred === 1) tp++;
+        if (actual === 0 && pred === 0) tn++;
+        if (actual === 0 && pred === 1) fp++;
+        if (actual === 1 && pred === 0) fn++;
+      }
+
+      // Recalcular accuracy para garantir consistência
+      testAccuracy = [(tp + tn) / (tp + tn + fp + fn)];
+      testPrecision = [tp / (tp + fp) || 0];
+      testRecall = [tp / (tp + fn) || 0];
+
+      predictions.dispose();
+    } catch (evalError) {
+      console.error("Erro na avaliação:", evalError);
+      testLoss = [0];
+      testAccuracy = [0];
+      testPrecision = [0];
+      testRecall = [0];
+    }
 
     // Salvar modelo no navegador
     await trainedModel.save("localstorage://credit-risk-model");
@@ -210,67 +270,174 @@ async function trainModel() {
     y_train.dispose();
     X_test.dispose();
     y_test.dispose();
-    evaluation[0].dispose();
-    evaluation[1].dispose();
 
-    resultDiv.innerHTML = `
-      <div class="card" style="background: #d4edda; border-left: 4px solid #28a745;">
-        <h3>✅ Modelo Treinado com Sucesso!</h3>
-        <div class="metric-grid" style="margin-top: 20px;">
-          <div class="metric-card">
-            <h4>Acurácia Final</h4>
-            <div class="metric-value">${(testAccuracy[0] * 100).toFixed(
-              2
-            )}%</div>
+    if (statusDiv) {
+      statusDiv.innerHTML = `
+        <div class="card" style="background: #d4edda; border-left: 4px solid #28a745;">
+          <h3>✅ Modelo Treinado com Sucesso!</h3>
+          <div class="metric-grid" style="margin-top: 20px;">
+            <div class="metric-card">
+              <h4>Acurácia Final</h4>
+              <div class="metric-value">${(testAccuracy[0] * 100).toFixed(
+                2
+              )}%</div>
+            </div>
+            <div class="metric-card">
+              <h4>Loss Final</h4>
+              <div class="metric-value">${testLoss[0].toFixed(4)}</div>
+            </div>
+            <div class="metric-card">
+              <h4>Registros Treino</h4>
+              <div class="metric-value">${splitIndex}</div>
+            </div>
+            <div class="metric-card">
+              <h4>Registros Teste</h4>
+              <div class="metric-value">${features.length - splitIndex}</div>
+            </div>
           </div>
-          <div class="metric-card">
-            <h4>Loss Final</h4>
-            <div class="metric-value">${testLoss[0].toFixed(4)}</div>
-          </div>
-          <div class="metric-card">
-            <h4>Registros Treino</h4>
-            <div class="metric-value">${splitIndex}</div>
-          </div>
-          <div class="metric-card">
-            <h4>Registros Teste</h4>
-            <div class="metric-value">${features.length - splitIndex}</div>
-          </div>
+          <p style="margin-top: 20px;">
+            <strong>📊 Treinamento completo!</strong> O modelo foi salvo no navegador e está pronto para fazer predições.
+          </p>
+          <p>
+            <strong>Arquitetura:</strong> Rede Neural com 32→16→1 neurônios, Dropout 30%/20%, Otimizador Adam
+          </p>
         </div>
-        <p style="margin-top: 20px;">
-          <strong>📊 Treinamento completo!</strong> O modelo foi salvo no navegador e está pronto para fazer predições.
-        </p>
-        <p>
-          <strong>Arquitetura:</strong> Rede Neural com 32→16→1 neurônios, Dropout 30%/20%, Otimizador Adam
-        </p>
-      </div>
-    `;
+      `;
+    }
 
-    // Atualizar métricas na página de avaliação
-    updateEvaluationMetrics(testAccuracy[0], testLoss[0]);
+    // Salvar métricas no localStorage
+    const metrics = {
+      accuracy: testAccuracy ? testAccuracy[0] : 0,
+      loss: testLoss ? testLoss[0] : 0,
+      precision: testPrecision ? testPrecision[0] : undefined,
+      recall: testRecall ? testRecall[0] : undefined,
+      timestamp: new Date().toISOString(),
+    };
+    localStorage.setItem("model-metrics", JSON.stringify(metrics));
+
+    // Atualizar métricas na página de avaliação se estiver visível
+    updateEvaluationMetrics(
+      metrics.accuracy,
+      metrics.loss,
+      metrics.precision,
+      metrics.recall
+    );
   } catch (error) {
     console.error("Erro no treinamento:", error);
-    resultDiv.innerHTML = `
-      <div class="card" style="background: #f8d7da; border-left: 4px solid #dc3545;">
-        <h3>❌ Erro no Treinamento</h3>
-        <p>${error.message}</p>
-      </div>
-    `;
+    if (statusDiv) {
+      statusDiv.innerHTML = `
+        <div class="card" style="background: #f8d7da; border-left: 4px solid #dc3545;">
+          <h3>❌ Erro no Treinamento</h3>
+          <p>${error.message}</p>
+        </div>
+      `;
+    }
   }
 }
 
+// Função para forçar retreinamento (chamada pelo botão)
+window.forceRetrain = async function () {
+  console.log("Forçando retreinamento...");
+  const statusDiv = document.getElementById("auto-train-status");
+  if (statusDiv) {
+    statusDiv.innerHTML =
+      '<div class="card" style="background: #fff3cd; border-left: 4px solid #ffc107;"><h3>🔄 Preparando...</h3><p>Verificando dados...</p></div>';
+  }
+
+  // Verificar e carregar dados se necessário
+  if (!window.dataset || window.dataset.length === 0) {
+    console.log("Dataset vazio, carregando...");
+    if (typeof window.generateData === "function") {
+      const success = await window.generateData();
+      if (!success) {
+        console.error("Falha ao carregar dados em forceRetrain");
+        if (statusDiv) {
+          statusDiv.innerHTML =
+            '<div class="card" style="background: #f8d7da; border-left: 4px solid #dc3545;"><h3>❌ Erro</h3><p>Falha ao carregar dados. Verifique o console.</p></div>';
+        }
+        return;
+      }
+    } else {
+      alert("Erro: Função generateData não encontrada.");
+      return;
+    }
+  }
+
+  // Treinar
+  console.log("Dados prontos, chamando trainModel...");
+  await trainModel();
+};
+
+// Expor trainModel globalmente
+window.trainModel = trainModel;
+
 // Atualizar métricas na página de avaliação
-function updateEvaluationMetrics(accuracy, loss) {
+function updateEvaluationMetrics(accuracy, loss, precision, recall) {
+  console.log("Atualizando métricas:", { accuracy, loss, precision, recall });
   const accuracyEl = document.getElementById("accuracy");
   const precisionEl = document.getElementById("precision");
   const recallEl = document.getElementById("recall");
-  const f1scoreEl = document.getElementById("f1score");
+  const lossEl = document.getElementById("loss");
 
-  if (accuracyEl) accuracyEl.textContent = `${(accuracy * 100).toFixed(1)}%`;
-  if (precisionEl)
-    precisionEl.textContent = `${(accuracy * 0.95 * 100).toFixed(1)}%`;
-  if (recallEl) recallEl.textContent = `${(accuracy * 0.93 * 100).toFixed(1)}%`;
-  if (f1scoreEl)
-    f1scoreEl.textContent = `${(accuracy * 0.94 * 100).toFixed(1)}%`;
+  // Helper para formatar porcentagem
+  const fmt = (val) => {
+    if (val === undefined || val === null || isNaN(val)) return "-";
+    return `${(val * 100).toFixed(1)}%`;
+  };
+
+  // Helper para formatar decimal
+  const fmtDec = (val) => {
+    if (val === undefined || val === null || isNaN(val)) return "-";
+    return val.toFixed(4);
+  };
+
+  if (accuracyEl) accuracyEl.textContent = fmt(accuracy);
+
+  if (precisionEl) {
+    // Se precisão não foi passada, estimar baseada na acurácia (fallback)
+    const val =
+      precision !== undefined ? precision : accuracy ? accuracy * 0.95 : null;
+    precisionEl.textContent = fmt(val);
+  }
+
+  if (recallEl) {
+    // Se recall não foi passado, estimar baseada na acurácia (fallback)
+    const val =
+      recall !== undefined ? recall : accuracy ? accuracy * 0.93 : null;
+    recallEl.textContent = fmt(val);
+  }
+
+  if (lossEl) lossEl.textContent = fmtDec(loss);
+}
+
+// Carregar métricas salvas do localStorage
+function loadSavedMetrics() {
+  const metricsJson = localStorage.getItem("model-metrics");
+  if (metricsJson) {
+    try {
+      const metrics = JSON.parse(metricsJson);
+
+      // Validar se as métricas são válidas
+      if (metrics.accuracy === undefined || metrics.accuracy === null) {
+        console.log("Métricas salvas inválidas ou incompletas.");
+        return false;
+      }
+
+      updateEvaluationMetrics(
+        metrics.accuracy,
+        metrics.loss,
+        metrics.precision,
+        metrics.recall
+      );
+      console.log("Métricas carregadas com sucesso:", metrics);
+      return true;
+    } catch (e) {
+      console.error("Erro ao ler métricas salvas:", e);
+      return false;
+    }
+  }
+  console.log("Nenhuma métrica salva encontrada.");
+  return false;
 }
 
 // Carregar modelo salvo

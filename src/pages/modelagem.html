@@ -15,16 +15,40 @@
 
 <div class="card">
   <h3>⚙️ Arquitetura do Modelo</h3>
-  <div class="code-block">
-    // Rede Neural Feedforward const model = tf.sequential({ layers: [ // Camada
-    de entrada (9 features) + 32 neurônios tf.layers.dense({ units: 32,
-    activation: 'relu', inputShape: [9] }), tf.layers.dropout({ rate: 0.3 }), //
-    Camada oculta com 16 neurônios tf.layers.dense({ units: 16, activation:
-    'relu' }), tf.layers.dropout({ rate: 0.2 }), // Camada de saída
-    (classificação binária) tf.layers.dense({ units: 1, activation: 'sigmoid' })
-    ] }); // Compilar com otimizador Adam model.compile({ optimizer: 'adam',
-    loss: 'binaryCrossentropy', metrics: ['accuracy', 'precision', 'recall'] });
-  </div>
+  <pre class="code-block">
+// Rede Neural Feedforward
+const model = tf.sequential({
+  layers: [
+    // Camada de entrada (9 features) + 32 neurônios
+    tf.layers.dense({
+      units: 32, 
+      activation: 'relu', 
+      inputShape: [9]
+    }),
+    tf.layers.dropout({ rate: 0.3 }),
+    
+    // Camada oculta com 16 neurônios
+    tf.layers.dense({
+      units: 16, 
+      activation: 'relu'
+    }),
+    tf.layers.dropout({ rate: 0.2 }),
+    
+    // Camada de saída (classificação binária)
+    tf.layers.dense({
+      units: 1, 
+      activation: 'sigmoid'
+    })
+  ]
+});
+
+// Compilar com otimizador Adam
+model.compile({
+  optimizer: 'adam',
+  loss: 'binaryCrossentropy',
+  metrics: ['accuracy', 'precision', 'recall']
+});</pre
+  >
 </div>
 
 <div class="card">

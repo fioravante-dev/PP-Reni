@@ -8,10 +8,7 @@ Projeto Prático - Análise de Dados e Machine Learning utilizando o German Cred
 PP-Reni/
 ├── index.html                    # Página principal da aplicação
 ├── .gitignore                    # Arquivos ignorados pelo Git
-│
-├── docs/                         # 📚 Documentação
-│   ├── README.md                 # Documentação detalhada
-│   └── ARCHITECTURE.md           # Arquitetura técnica
+├── README.md                     # Documentação do projeto
 │
 ├── src/                          # 💻 Código fonte
 │   ├── css/
@@ -20,8 +17,18 @@ PP-Reni/
 │   ├── js/
 │   │   ├── app.js                # Lógica principal
 │   │   ├── charts.js             # Gráficos e visualizações
+│   │   ├── ml.js                 # Lógica de Machine Learning (TensorFlow.js)
 │   │   ├── prediction.js         # Algoritmo de predição
-│   │   └── pages.js              # Conteúdo das páginas
+│   │   └── pageLoader.js         # Carregamento dinâmico de páginas
+│   │
+│   ├── pages/                    # Componentes HTML das seções
+│   │   ├── analise.html
+│   │   ├── avaliacao.html
+│   │   ├── conclusao.html
+│   │   ├── descricao.html
+│   │   ├── etl.html
+│   │   ├── modelagem.html
+│   │   └── predicao.html
 │   │
 │   ├── data/
 │   │   ├── german_credit_data.csv         # Dataset original
@@ -30,10 +37,6 @@ PP-Reni/
 │   └── python/
 │       └── process_german_data.py         # Script ETL
 │
-└── old_versions/                 # 📦 Versões anteriores
-    ├── credit_risk_detector.html
-    ├── credit_risk_detector_german.html
-    └── german-credit.zip
 ```
 
 ## 🚀 Como Usar
@@ -84,6 +87,7 @@ python src/python/process_german_data.py
 ## 🛠️ Tecnologias
 
 - **Frontend**: HTML5, CSS3, JavaScript ES6+
+- **Machine Learning**: TensorFlow.js (Deep Learning no navegador)
 - **Visualização**: Chart.js 3.9.1
 - **ETL**: Python, Pandas
 - **Dados**: JSON, CSV
@@ -112,9 +116,10 @@ Para documentação completa, consulte:
 
 ### 3. Modelagem
 
-- Algoritmo de classificação
+- Rede Neural Artificial (TensorFlow.js)
+- Arquitetura: Dense Layers + Dropout
 - Feature importance
-- Métricas de treinamento
+- Métricas de treinamento (Loss, Accuracy)
 
 ### 4. Avaliação
 
@@ -130,8 +135,12 @@ Para documentação completa, consulte:
 
 ## 📝 Licença
 
-Projeto educacional - 2025
+Projeto Prático - 2025
 
-## 🤝 Contribuições
+## 👥 Equipe
 
-Sugestões e melhorias são bem-vindas!
+- Pedro Rogério de Castro Fioravante
+- Beatriz Alves Moraes
+- Liniker Silva
+- Fernando de Oliveira Lopes
+- Felipe de Melo Lemos

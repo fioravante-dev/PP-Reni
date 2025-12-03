@@ -1,14 +1,16 @@
 // Criar gráficos
 function createCharts() {
-  if (dataset.length === 0) {
-    generateData();
+  const data = window.dataset || [];
+  if (data.length === 0) {
+    if (typeof window.generateData === "function") window.generateData();
+    return; // Aguardar dados carregarem
   }
 
   // Distribuição de Risco
   const riskCounts = {
-    Baixo: dataset.filter((d) => d.risco === "Baixo").length,
-    Médio: dataset.filter((d) => d.risco === "Médio").length,
-    Alto: dataset.filter((d) => d.risco === "Alto").length,
+    Baixo: data.filter((d) => d.risco === "Baixo").length,
+    Médio: data.filter((d) => d.risco === "Médio").length,
+    Alto: data.filter((d) => d.risco === "Alto").length,
   };
 
   if (charts.riskDist) charts.riskDist.destroy();
@@ -41,13 +43,9 @@ function createCharts() {
 
   // Valor de Crédito por Risco
   const creditByRisk = {
-    Baixo: dataset
-      .filter((d) => d.risco === "Baixo")
-      .map((d) => d.valor_credito),
-    Médio: dataset
-      .filter((d) => d.risco === "Médio")
-      .map((d) => d.valor_credito),
-    Alto: dataset.filter((d) => d.risco === "Alto").map((d) => d.valor_credito),
+    Baixo: data.filter((d) => d.risco === "Baixo").map((d) => d.valor_credito),
+    Médio: data.filter((d) => d.risco === "Médio").map((d) => d.valor_credito),
+    Alto: data.filter((d) => d.risco === "Alto").map((d) => d.valor_credito),
   };
 
   if (charts.scoreRisk) charts.scoreRisk.destroy();
@@ -95,13 +93,9 @@ function createCharts() {
 
   // Duração por Risco
   const durationByRisk = {
-    Baixo: dataset
-      .filter((d) => d.risco === "Baixo")
-      .map((d) => d.duracao_meses),
-    Médio: dataset
-      .filter((d) => d.risco === "Médio")
-      .map((d) => d.duracao_meses),
-    Alto: dataset.filter((d) => d.risco === "Alto").map((d) => d.duracao_meses),
+    Baixo: data.filter((d) => d.risco === "Baixo").map((d) => d.duracao_meses),
+    Médio: data.filter((d) => d.risco === "Médio").map((d) => d.duracao_meses),
+    Alto: data.filter((d) => d.risco === "Alto").map((d) => d.duracao_meses),
   };
 
   if (charts.incomeRisk) charts.incomeRisk.destroy();
